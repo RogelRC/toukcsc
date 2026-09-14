@@ -428,7 +428,7 @@
 		</div>
 
 		<!-- Progress (desktop) -->
-		{#if progress.phase}
+		{#if searching && progress.phase}
 			<div class="hidden text-xs text-zinc-500 lg:block">
 				<div class="mb-1">{progress.phase}</div>
 				{#if progress.nodes > 0}
