@@ -6,6 +6,7 @@
 		allDifficulties,
 		allTypes,
 		difficultyLabel,
+		skillPrimaryType,
 		typeColor
 	} from '$lib/gameData';
 	import { runSearch } from '$lib/search';
@@ -28,6 +29,8 @@
 	});
 
 	let skillQuery = $state('');
+	let showSkillPicker = $state(false);
+	let skillTypeFilter = $state('All');
 
 	let searching = $state(false);
 	let searched = $state(false);
@@ -91,10 +94,11 @@
 
 	const filteredSkills = $derived.by(() => {
 		const q = skillQuery.toLowerCase().trim();
-		if (!q) {
-			return allSkillNames;
-		}
-		return allSkillNames.filter((s) => s.toLowerCase().includes(q));
+		return allSkillNames.filter(
+			(s) =>
+				(!q || s.toLowerCase().includes(q)) &&
+				(skillTypeFilter === 'All' || skillPrimaryType.get(s) === skillTypeFilter)
+		);
 	});
 
 	const resultCount = $derived(results.length);
@@ -220,58 +224,81 @@
 			<h2 class="mb-3 text-sm font-semibold tracking-wide text-zinc-300 uppercase">
 				Target Skills
 			</h2>
-			<div class="relative mb-3">
-				<input
-					type="text"
-					placeholder="Search skills..."
-					bind:value={skillQuery}
-					class="w-full rounded border border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-zinc-100 placeholder-zinc-500 focus:border-rose-500 focus:outline-none"
-				/>
-			</div>
 
-			<!-- Selected skills -->
-			{#if targetSkills.length > 0}
+			{#if targetSkills.length === 0}
+				<p class="mb-3 text-xs text-zinc-500">No skills selected yet.</p>
+			{:else}
 				<div class="mb-3 flex flex-wrap gap-1.5">
 					{#each targetSkills as skill (skill)}
-						<span
-							class="inline-flex items-center gap-1 rounded border border-rose-500/40 bg-rose-500/10 px-2 py-1 text-xs text-rose-200"
+						<button
+							type="button"
+							onclick={() => removeSkill(skill)}
+							title="Remove {skill}"
+							class="group inline-flex items-center gap-1 rounded border border-rose-500/40 bg-rose-500/10 px-2 py-1 text-xs text-rose-200 hover:border-red-500 hover:text-red-300"
 						>
 							{skill}
-							<button
-								class="ml-0.5 text-rose-400/70 hover:text-rose-300"
-								aria-label="Remove {skill}"
-								onclick={() => removeSkill(skill)}
-							>
-								✕
-							</button>
-						</span>
+							<span class="text-rose-400/70 group-hover:text-red-400/70">✕</span>
+						</button>
 					{/each}
 				</div>
 			{/if}
 
-			<!-- Skill suggestions -->
-			<div class="max-h-72 overflow-y-auto rounded border border-zinc-800">
-				{#each filteredSkills as skill (skill)}
-					<button
-						class="flex w-full items-center justify-between px-3 py-1.5 text-left text-sm hover:bg-zinc-800/60 {targetSkills.includes(
-							skill
-						)
-							? 'bg-rose-500/10'
-							: ''}"
-						onclick={() => addSkill(skill)}
-						disabled={targetSkills.includes(skill)}
+			<button
+				type="button"
+				onclick={() => (showSkillPicker = !showSkillPicker)}
+				class="mb-2 w-full rounded border border-zinc-700 px-3 py-1.5 text-sm text-zinc-200 hover:border-rose-500 hover:text-rose-300"
+			>
+				{showSkillPicker ? 'Close Skill List' : 'Select Skills'}
+			</button>
+
+			{#if showSkillPicker}
+				<div class="mb-2 flex flex-wrap gap-2">
+					<input
+						type="text"
+						placeholder="Search skills..."
+						bind:value={skillQuery}
+						class="min-w-0 flex-1 basis-40 rounded border border-zinc-700 bg-zinc-800 px-2 py-1.5 text-sm text-zinc-100 placeholder-zinc-500 focus:border-rose-500 focus:outline-none"
+					/>
+					<select
+						bind:value={skillTypeFilter}
+						class="max-w-full rounded border border-zinc-700 bg-zinc-800 px-1.5 py-1.5 text-xs text-zinc-100 focus:border-rose-500 focus:outline-none"
+						title="Skill type filter"
 					>
-						<span class:text-rose-300={targetSkills.includes(skill)}>
-							{skill}
-						</span>
-						{#if !targetSkills.includes(skill)}
-							<span class="text-zinc-600">+</span>
-						{/if}
-					</button>
-				{:else}
-					<div class="px-3 py-2 text-sm text-zinc-500">No skills found</div>
-				{/each}
-			</div>
+						<option value="All">All types</option>
+						{#each allTypes as type (type)}
+							<option value={type}>{type}</option>
+						{/each}
+					</select>
+				</div>
+
+				<!-- Skill suggestions -->
+				<div class="max-h-72 overflow-y-auto pr-1">
+					{#each filteredSkills as skill (skill)}
+						<button
+							type="button"
+							onclick={() => addSkill(skill)}
+							class="flex w-full items-center justify-between rounded px-2 py-1 text-left text-xs text-zinc-300 hover:bg-zinc-800 {targetSkills.includes(
+								skill
+							)
+								? 'bg-rose-500/10 text-rose-200'
+								: ''}"
+							disabled={targetSkills.includes(skill)}
+						>
+							<span>{skill}</span>
+							{#if skillTypeFilter === 'All'}
+								<span
+									class="text-zinc-500"
+									style="color: {typeColor(skillPrimaryType.get(skill) ?? 'SUP')}"
+								>
+									{skillPrimaryType.get(skill) ?? 'SUP'}
+								</span>
+							{/if}
+						</button>
+					{:else}
+						<div class="px-3 py-2 text-sm text-zinc-500">No skills found</div>
+					{/each}
+				</div>
+			{/if}
 		</section>
 
 		<!-- Mitama Count -->

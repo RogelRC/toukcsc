@@ -61,6 +61,33 @@ export function typeColor(type: MitamaType): string {
 	return TYPE_COLORS[type] ?? '#71717a';
 }
 
+/** Primary type of a skill: the mitama type where it appears most often */
+export const skillPrimaryType = new Map<string, MitamaType>();
+{
+	const counts = new Map<string, Map<MitamaType, number>>();
+	for (const m of mitama) {
+		for (const s of m.skills) {
+			let cm = counts.get(s);
+			if (!cm) {
+				cm = new Map();
+				counts.set(s, cm);
+			}
+			cm.set(m.type, (cm.get(m.type) ?? 0) + 1);
+		}
+	}
+	for (const [skill, cm] of counts) {
+		let best: MitamaType = 'SUP';
+		let bestN = -1;
+		for (const [t, n] of cm) {
+			if (n > bestN) {
+				bestN = n;
+				best = t;
+			}
+		}
+		skillPrimaryType.set(skill, best);
+	}
+}
+
 /** The fixed skill (skill 12) for a mitama, or null if fewer than 12 skills */
 export function fixedSkill(m: Mitama): string | null {
 	return m.skills.length >= 12 ? m.skills[11] : null;

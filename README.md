@@ -47,14 +47,14 @@ npm run dev -- --open
 
 ### Scripts
 
-| Command          | Description                          |
-| ---------------- | ------------------------------------ |
-| `npm run dev`    | Start the development server         |
-| `npm run build`  | Build the production bundle          |
-| `npm run preview`| Preview the production build locally |
-| `npm run check`  | Type-check with `svelte-check`       |
-| `npm run lint`   | Run Prettier and ESLint              |
-| `npm run format` | Auto-format the codebase             |
+| Command           | Description                          |
+| ----------------- | ------------------------------------ |
+| `npm run dev`     | Start the development server         |
+| `npm run build`   | Build the production bundle          |
+| `npm run preview` | Preview the production build locally |
+| `npm run check`   | Type-check with `svelte-check`       |
+| `npm run lint`    | Run Prettier and ESLint              |
+| `npm run format`  | Auto-format the codebase             |
 
 ## 🏗️ Project Structure
 
