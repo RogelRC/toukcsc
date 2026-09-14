@@ -1,0 +1,6 @@
+{
+	"mitamaCount": 300,
+	"skillCount": 522,
+	"types": ["ATK", "DCT", "DEF", "HLG", "LCK", "PLN", "SPC", "SPD", "SPT", "SUP"],
+	"source": "Google Sheets - Toukiden Kiwami Checklist"
+}
