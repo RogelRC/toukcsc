@@ -1842,7 +1842,9 @@
 			"Dissection (Health)",
 			"Vitality (Time +10s)",
 			"Vitality+ (Sturdy)",
-			"Vitality+ (Amplify)"
+			"Vitality+ (Amplify)",
+			"Recovery+ (Heal)",
+			"Vitality+ (Assist)"
 		]
 	},
 	{
